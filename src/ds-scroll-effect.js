@@ -7,9 +7,17 @@ License: dsflon All Rights Reserved.
 
 */
 
-export default class DsScrollEffect {
-    
-    constructor(selector, option) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else {
+        factory();
+    }
+}(this, function() {
+
+    function DsScrollEffect(selector, option)  {
 
         this.selector = selector;
         this.selectorName = this.selector.split(".")[1] ? this.selector.split(".")[1] : this.selector.split("#")[1];
@@ -35,25 +43,27 @@ export default class DsScrollEffect {
     ** Init
     **
     **/
-    Init() {
+    DsScrollEffect.prototype.Init = function() {
 
-        const Func = (INDEX) => {
-
-            this.SetInitialClass(INDEX);
-            this.StartEffect(INDEX);
-
-            window.addEventListener('scroll', () => {
-                this.StartEffect(INDEX);
-            })
-            window.addEventListener('resize', () => {
-                this.StartEffect(INDEX);
-            })
-
-        }
+        var THAT = this;
 
         for (var i = 0; i < this.target.length; i++) {
 
             Func(i)
+
+        }
+
+        function Func(INDEX) {
+
+            THAT.SetInitialClass(INDEX);
+            THAT.StartEffect(INDEX);
+
+            window.addEventListener('scroll', function() {
+                THAT.StartEffect(INDEX);
+            })
+            window.addEventListener('resize', function() {
+                THAT.StartEffect(INDEX);
+            })
 
         }
 
@@ -65,19 +75,15 @@ export default class DsScrollEffect {
     ** StartEffect
     **
     **/
-    SetInitialClass(i) {
+    DsScrollEffect.prototype.SetInitialClass = function(i) {
 
-        const DATA = this.target[i].getAttribute( "data-effecttarget" );
+        var THAT = this;
+        var data = this.target[i].getAttribute( "data-effecttarget" );
 
-        if( DATA ) {
 
-            this.dataTarget = document.querySelectorAll(DATA);
+        if( data ) {
 
-            const EndFunc = (j) => {
-                this.dataTarget[j].addEventListener('transitionend', () => {
-                    this.RemoveClass( this.dataTarget[j], this.class_transition );
-                })
-            }
+            this.dataTarget = document.querySelectorAll(data);
 
             for (var j = 0; j < this.dataTarget.length; j++) {
 
@@ -86,12 +92,18 @@ export default class DsScrollEffect {
 
             }
 
+            function EndFunc(j) {
+                THAT.dataTarget[j].addEventListener('transitionend', function() {
+                    THAT.RemoveClass( THAT.dataTarget[j], THAT.class_transition );
+                })
+            }
+
         } else {
 
             this.AddClass( this.target[i], this.class_transition );
 
-            this.target[i].addEventListener('transitionend', () => {
-                this.RemoveClass( this.target[i], this.class_transition );
+            this.target[i].addEventListener('transitionend', function() {
+                THAT.RemoveClass( THAT.target[i], THAT.class_transition );
             })
 
         }
@@ -104,16 +116,16 @@ export default class DsScrollEffect {
     ** StartEffect
     **
     **/
-    StartEffect(i) {
+    DsScrollEffect.prototype.StartEffect = function(i) {
 
-        let flag = false;
+        var flag = false;
 
-        const SCROLL_TOP = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
-        const WIN_HEIGHT = window.document.documentElement.clientHeight;
-        const DOC_HEIGHT = document.documentElement.scrollHeight;
+        var SCROLL_TOP = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
+        var WIN_HEIGHT = window.document.documentElement.clientHeight;
+        var DOC_HEIGHT = document.documentElement.scrollHeight;
 
-        const VIEW = SCROLL_TOP + WIN_HEIGHT;
-        const OFFSET = this.GetOffset(this.target[i]).top + this.ajustVal;
+        var VIEW = SCROLL_TOP + WIN_HEIGHT;
+        var OFFSET = this.GetOffset(this.target[i]).top + this.ajustVal;
 
         if( VIEW > OFFSET ) {
 
@@ -147,9 +159,9 @@ export default class DsScrollEffect {
     ** GetOffset
     **
     **/
-    GetOffset(el) {
+    DsScrollEffect.prototype.GetOffset = function(el) {
 
-        const BOX = el.getBoundingClientRect();
+        var BOX = el.getBoundingClientRect();
 
         return {
             top: BOX.top + window.pageYOffset - document.documentElement.clientTop,
@@ -157,7 +169,7 @@ export default class DsScrollEffect {
         }
 
     }
-    AddClass( element, _className ) {
+    DsScrollEffect.prototype.AddClass = function( element, _className ) {
 
         if (element.classList) {
             element.classList.add(_className);
@@ -166,7 +178,7 @@ export default class DsScrollEffect {
         }
 
     }
-    RemoveClass( element, _className ) {
+    DsScrollEffect.prototype.RemoveClass = function( element, _className ) {
 
         if (element.classList) {
             element.classList.remove(_className);
@@ -176,4 +188,8 @@ export default class DsScrollEffect {
 
     }
 
-}
+    // module.exports = DsScrollEffect;
+
+    return DsScrollEffect;
+
+}));
