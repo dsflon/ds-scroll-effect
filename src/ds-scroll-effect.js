@@ -13,7 +13,7 @@ License: dsflon All Rights Reserved.
     } else if (typeof exports === 'object') {
         module.exports = factory();
     } else {
-        factory();
+        root.DsScrollEffect = factory();
     }
 }(this, function() {
 
@@ -31,8 +31,10 @@ License: dsflon All Rights Reserved.
 
         this.class_transition = this.selectorName + "_transition";
 
-        if( this.target ) {
+        if( this.target.length != 0 ) {
             this.Init();
+        } else {
+            console.error("."+selector.split(".")[1]+" is not found");
         }
 
     }
@@ -187,8 +189,6 @@ License: dsflon All Rights Reserved.
         }
 
     }
-
-    // module.exports = DsScrollEffect;
 
     return DsScrollEffect;
 
